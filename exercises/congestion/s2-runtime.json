@@ -6,7 +6,7 @@
     {
       "table": "MyIngress.ipv6_lpm",
       "match": {
-        "hdr.ipv6.destination_address": ["1000::1:1", 128]
+        "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:1:1", 128]
       },
       "action_name": "MyIngress.ipv6_forward",
       "action_params": {
@@ -17,7 +17,7 @@
     {
       "table": "MyIngress.ipv6_lpm",
       "match": {
-        "hdr.ipv6.destination_address": ["1000::2:2", 128]
+        "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:2:2", 128]
       },
       "action_name": "MyIngress.ipv6_forward",
       "action_params": {
@@ -28,7 +28,7 @@
     {
       "table": "MyIngress.ipv6_lpm",
       "match": {
-        "hdr.ipv6.destination_address": ["1000::3:3", 128]
+        "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:3:3", 128]
       },
       "action_name": "MyIngress.ipv6_forward",
       "action_params": {
