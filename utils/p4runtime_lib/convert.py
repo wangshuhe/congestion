@@ -115,6 +115,12 @@ if __name__ == '__main__':
     dec_ip = decodeIPv4(enc_ip)
     assert(ip == dec_ip)
 
+    ipv6 = "1000:0:0:0:0:0:1:1"
+    enc_ipv6 = encodeIPv6(ip)
+    assert(enc_ipv6 == '\x1000\x0000\x0000\x0000\x0000\x0000\x0001\x0001')
+    dec_ipv6 = decodeIPv6(enc_ip)
+    assert(ipv6 == dec_ip)
+
     num = 1337
     byte_len = 5
     enc_num = encodeNum(num, byte_len * 8)
@@ -129,6 +135,7 @@ if __name__ == '__main__':
 
     assert(encode(mac, 6 * 8) == enc_mac)
     assert(encode(ip, 4 * 8) == enc_ip)
+    assert(encode(ipv6, 16 * 8) == enc_ipv6)
     assert(encode(num, 5 * 8) == enc_num)
     assert(encode((num,), 5 * 8) == enc_num)
     assert(encode([num], 5 * 8) == enc_num)
