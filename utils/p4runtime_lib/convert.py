@@ -33,6 +33,18 @@ def encodeMac(mac_addr_string):
 def decodeMac(encoded_mac_addr):
     return ':'.join(s.hex() for s in encoded_mac_addr)
 
+# IPv6 pattern
+ipv6_pattern = re.compile('^([0-9a-fA-F]{1,4}:){0,6}([0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}([0-9a-fA-F]{1,4})?$')
+
+def matchesIPv6(ip_addr_string):
+    return ipv6_pattern.match(ip_addr_string) is not None
+
+def encodeIPv6(ip_addr_string):
+    return socket.inet_pton(socket.AF_INET6, ip_addr_string)
+
+def decodeIPv6(encoded_ip_addr):
+    return socket.inet_ntop(socket.AF_INET6, encoded_ip_addr)
+
 ip_pattern = re.compile('^(\d{1,3}\.){3}(\d{1,3})$')
 def matchesIPv4(ip_addr_string):
     return ip_pattern.match(ip_addr_string) is not None
@@ -77,6 +89,8 @@ def encode(x, bitwidth):
             encoded_bytes = encodeMac(x)
         elif matchesIPv4(x):
             encoded_bytes = encodeIPv4(x)
+        elif matchesIPv6(x):
+            encoded_bytes = encodeIPv6(x)
         else:
             # Assume that the string is already encoded
             encoded_bytes = x
