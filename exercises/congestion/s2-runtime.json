@@ -4,7 +4,7 @@
   "bmv2_json": "build/basic_tunnel.json",
   "table_entries": [
     {
-      "table": "MyIngress.ipv6_lpm",
+      "table": "MyIngress.ipv6_exact",
       "match": {
         "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:1:1", 128]
       },
@@ -15,7 +15,7 @@
       }
     },
     {
-      "table": "MyIngress.ipv6_lpm",
+      "table": "MyIngress.ipv6_exact",
       "match": {
         "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:2:2", 128]
       },
@@ -26,7 +26,7 @@
       }
     },
     {
-      "table": "MyIngress.ipv6_lpm",
+      "table": "MyIngress.ipv6_exact",
       "match": {
         "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:3:3", 128]
       },

@@ -109,9 +109,9 @@ control MyIngress(inout headers hdr,
         hdr.ipv6.hop_limit = hdr.ipv6.hop_limit - 1;
     }
 
-    table ipv6_lpm {
+    table ipv6_exact {
         key = {
-            hdr.ipv6.destination_address: lpm;
+            hdr.ipv6.destination_address: exact;
         }
         actions = {
             ipv6_forward;
