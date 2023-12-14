@@ -83,10 +83,13 @@ def encode(x, bitwidth):
     print("x:", x)
     'Tries to infer the type of `x` and encode it'
     byte_len = bitwidthToBytes(bitwidth)
+    print("byte_len:", byte_len)
     if (type(x) == list or type(x) == tuple) and len(x) == 1:
         x = x[0]
+    print("x:", x)
     encoded_bytes = None
     if type(x) == str:
+        print("match str")
         if matchesMac(x):
             print("match mac")
             encoded_bytes = encodeMac(x)
@@ -104,6 +107,7 @@ def encode(x, bitwidth):
         encoded_bytes = encodeNum(x, bitwidth)
     else:
         raise Exception("Encoding objects of %r is not supported" % type(x))
+    print("encoded_bytes:", encoded_bytes)
     assert(len(encoded_bytes) == byte_len)
     return encoded_bytes
 
