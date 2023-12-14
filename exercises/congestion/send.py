@@ -26,7 +26,7 @@ def main():
     parser.add_argument('--dst_id', type=int, default=None, help='The myTunnel dst_id to use, if unspecified then myTunnel header will not be included in packet')
     args = parser.parse_args()
 
-    addr = socket.gethostbyname(args.ip_addr)
+    addr = args.ip_addr
     dst_id = args.dst_id
     iface = get_if()
 

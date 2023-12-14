@@ -34,7 +34,7 @@ def decodeMac(encoded_mac_addr):
     return ':'.join(s.hex() for s in encoded_mac_addr)
 
 # IPv6 pattern
-ipv6_pattern = re.compile('^([0-9a-fA-F]{1,4}:){0,6}([0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:){0,6}([0-9a-fA-F]{1,4})?$')
+ipv6_pattern = re.compile('^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$')
 
 def matchesIPv6(ip_addr_string):
     return ipv6_pattern.match(ip_addr_string) is not None
@@ -79,35 +79,25 @@ def decodeNum(encoded_number):
     return int(encoded_number.hex(), 16)
 
 def encode(x, bitwidth):
-    print("bitwidth:", bitwidth)
-    print("x:", x)
     'Tries to infer the type of `x` and encode it'
     byte_len = bitwidthToBytes(bitwidth)
-    print("byte_len:", byte_len)
     if (type(x) == list or type(x) == tuple) and len(x) == 1:
         x = x[0]
-    print("x:", x)
     encoded_bytes = None
     if type(x) == str:
-        print("match str")
         if matchesMac(x):
-            print("match mac")
             encoded_bytes = encodeMac(x)
         elif matchesIPv4(x):
-            print("match ipv4")
             encoded_bytes = encodeIPv4(x)
         elif matchesIPv6(x):
-            print("match ipv6")
             encoded_bytes = encodeIPv6(x)
         else:
             # Assume that the string is already encoded
             encoded_bytes = x
     elif type(x) == int:
-        print("match int")
         encoded_bytes = encodeNum(x, bitwidth)
     else:
         raise Exception("Encoding objects of %r is not supported" % type(x))
-    print("encoded_bytes:", encoded_bytes)
     assert(len(encoded_bytes) == byte_len)
     return encoded_bytes
 
