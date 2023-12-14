@@ -100,7 +100,7 @@ def encode(x, bitwidth):
             # Assume that the string is already encoded
             encoded_bytes = x
     elif type(x) == int:
-            print("match int")
+        print("match int")
         encoded_bytes = encodeNum(x, bitwidth)
     else:
         raise Exception("Encoding objects of %r is not supported" % type(x))
