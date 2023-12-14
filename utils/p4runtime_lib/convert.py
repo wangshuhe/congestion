@@ -88,17 +88,19 @@ def encode(x, bitwidth):
     encoded_bytes = None
     if type(x) == str:
         if matchesMac(x):
+            print("match mac")
             encoded_bytes = encodeMac(x)
         elif matchesIPv4(x):
+            print("match ipv4")
             encoded_bytes = encodeIPv4(x)
         elif matchesIPv6(x):
-            self.logger("bitwidth:", bitwidth)
-            self.logger("x:", x)
+            print("match ipv6")
             encoded_bytes = encodeIPv6(x)
         else:
             # Assume that the string is already encoded
             encoded_bytes = x
     elif type(x) == int:
+            print("match int")
         encoded_bytes = encodeNum(x, bitwidth)
     else:
         raise Exception("Encoding objects of %r is not supported" % type(x))
