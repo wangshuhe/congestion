@@ -79,8 +79,8 @@ def decodeNum(encoded_number):
     return int(encoded_number.hex(), 16)
 
 def encode(x, bitwidth):
-    self.logger("bitwidth:", bitwidth)
-    self.logger("x:", x)
+    print("bitwidth:", bitwidth)
+    print("x:", x)
     'Tries to infer the type of `x` and encode it'
     byte_len = bitwidthToBytes(bitwidth)
     if (type(x) == list or type(x) == tuple) and len(x) == 1:
