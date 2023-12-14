@@ -141,7 +141,7 @@ control MyIngress(inout headers hdr,
     apply {
         if (hdr.ipv6.isValid() && !hdr.myTunnel.isValid()) {
             // Process only non-tunneled IPv6 packets
-            ipv6_lpm.apply();
+            ipv6_exact.apply();
         }
 
         if (hdr.myTunnel.isValid()) {
