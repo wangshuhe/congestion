@@ -90,8 +90,8 @@ def encode(x, bitwidth):
         elif matchesIPv4(x):
             encoded_bytes = encodeIPv4(x)
         elif matchesIPv6(x):
-            print("bitwidth:", bitwidth)
-            print("x:", x)
+            self.logger("bitwidth:", bitwidth)
+            self.logger("x:", x)
             encoded_bytes = encodeIPv6(x)
         else:
             # Assume that the string is already encoded
