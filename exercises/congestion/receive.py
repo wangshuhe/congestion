@@ -2,7 +2,6 @@
 import os
 import sys
 
-from myTunnel_header import MyTunnel
 from scapy.all import TCP, get_if_list, sniff
 
 
@@ -19,12 +18,11 @@ def get_if():
     return iface
 
 def handle_pkt(pkt):
-    if MyTunnel in pkt or (TCP in pkt and pkt[TCP].dport == 1234):
-        print("got a packet")
-        pkt.show2()
+    print("got a packet")
+    pkt.show2()
 #        hexdump(pkt)
 #        print "len(pkt) = ", len(pkt)
-        sys.stdout.flush()
+    sys.stdout.flush()
 
 
 def main():

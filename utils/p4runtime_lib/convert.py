@@ -33,6 +33,18 @@ def encodeMac(mac_addr_string):
 def decodeMac(encoded_mac_addr):
     return ':'.join(s.hex() for s in encoded_mac_addr)
 
+seaid_pattern = re.compile('^([\da-fA-F]{2}){20}$')
+
+def matchesSeaid(seaid_string):
+    return seaid_pattern.match(seaid_string) is not None
+
+def encodeSeaid(seaid_string):
+    return bytes.fromhex(seaid_string)
+
+def decodeSeaid(encoded_seaid):
+    return ''.join(format(byte, '02x') for byte in encoded_seaid)
+
+
 # IPv6 pattern
 ipv6_pattern = re.compile('^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$')
 
@@ -91,6 +103,8 @@ def encode(x, bitwidth):
             encoded_bytes = encodeIPv4(x)
         elif matchesIPv6(x):
             encoded_bytes = encodeIPv6(x)
+        elif matchesSeaid(x):
+            encoded_bytes = encodeSeaid(x)
         else:
             # Assume that the string is already encoded
             encoded_bytes = x

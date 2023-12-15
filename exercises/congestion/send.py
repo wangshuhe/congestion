@@ -3,7 +3,6 @@ import argparse
 import random
 import socket
 
-from myTunnel_header import MyTunnel
 from scapy.all import IPv6, TCP, Ether, get_if_hwaddr, get_if_list, sendp
 
 
@@ -21,24 +20,14 @@ def get_if():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('ip_addr', type=str, help="The destination IP address to use")
     parser.add_argument('message', type=str, help="The message to include in packet")
-    parser.add_argument('--dst_id', type=int, default=None, help='The myTunnel dst_id to use, if unspecified then myTunnel header will not be included in packet')
     args = parser.parse_args()
 
-    addr = args.ip_addr
-    dst_id = args.dst_id
     iface = get_if()
 
-    if (dst_id is not None):
-        print("sending on interface {} to dst_id {}".format(iface, str(dst_id)))
-        pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
-        pkt = pkt / MyTunnel(dst_id=dst_id) / IPv6(dst=addr) / args.message
-    else:
-        print("sending on interface {} to IP addr {}".format(iface, str(addr)))
-        pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
-        pkt = pkt / IPv6(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / args.message
-
+    pkt =  Ether(src=get_if_hwaddr(iface), dst='08:00:00:00:01:00')
+    pkt = pkt / IPv6(dst='1000:0:0:0:0:0:0;1') / IDP(dstSeaid='0000000000000000000000000000000000000001') / Common / SeadpData / args.message
+    
     pkt.show2()
 #    hexdump(pkt)
 #    print "len(pkt) = ", len(pkt)

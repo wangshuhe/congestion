@@ -1,70 +1,18 @@
 {
   "target": "bmv2",
-  "p4info": "build/basic_tunnel.p4.p4info.txt",
-  "bmv2_json": "build/basic_tunnel.json",
+  "p4info": "build/switch.p4.p4info.txt",
+  "bmv2_json": "build/switch.json",
   "table_entries": [
     {
-      "table": "MyIngress.ipv6_exact",
+      "table": "MyIngress.idp_exact",
       "match": {
-        "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:1:1"]
+        "hdr.idp.dst_seaid": ["0000000000000000000000000000000000000001"]
       },
-      "action_name": "MyIngress.ipv6_forward",
+      "action_name": "MyIngress.idp_forward",
       "action_params": {
-        "dstAddr": "08:00:00:00:01:11",
-        "port": 1
-      }
-    },
-    {
-      "table": "MyIngress.ipv6_exact",
-      "match": {
-        "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:2:2"]
-      },
-      "action_name": "MyIngress.ipv6_forward",
-      "action_params": {
-        "dstAddr": "08:00:00:00:02:00",
+        "dstAddr": "08:00:00:00:08:00",
+        "ip": "1000:0:0:0:0:0:0:2",
         "port": 2
-      }
-    },
-    {
-      "table": "MyIngress.ipv6_exact",
-      "match": {
-        "hdr.ipv6.destination_address": ["1000:0:0:0:0:0:3:3"]
-      },
-      "action_name": "MyIngress.ipv6_forward",
-      "action_params": {
-        "dstAddr": "08:00:00:00:03:00",
-        "port": 3
-      }
-    },
-
-    {
-      "table": "MyIngress.myTunnel_exact",
-      "match": {
-        "hdr.myTunnel.dst_id": [1]
-      },
-      "action_name": "MyIngress.myTunnel_forward",
-      "action_params": {
-        "port": 1
-      }
-    },
-    {
-      "table": "MyIngress.myTunnel_exact",
-      "match": {
-        "hdr.myTunnel.dst_id": [2]
-      },
-      "action_name": "MyIngress.myTunnel_forward",
-      "action_params": {
-        "port": 2
-      }
-    },
-    {
-      "table": "MyIngress.myTunnel_exact",
-      "match": {
-        "hdr.myTunnel.dst_id": [3]
-      },
-      "action_name": "MyIngress.myTunnel_forward",
-      "action_params": {
-        "port": 3
       }
     }
   ]

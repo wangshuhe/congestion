@@ -2,8 +2,10 @@
 #include <core.p4>
 #include <v1model.p4>
 
-const bit<16> TYPE_MYTUNNEL = 0x1212;
 const bit<16> TYPE_IPV6 = 0x86DD;
+const bit<8>  TYPE_IDP = 0x92;
+const bit<8>  TYPE_SEADP = 0x01;
+const bit<8>  TYPE_SEADP_DATA = 0x00;
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -12,6 +14,7 @@ const bit<16> TYPE_IPV6 = 0x86DD;
 typedef bit<9>  egressSpec_t;
 typedef bit<48> macAddr_t;
 typedef bit<128> ip6Addr_t;
+typedef bit<6>  typo_t;
 
 header ethernet_t {
     macAddr_t dstAddr;
@@ -19,20 +22,46 @@ header ethernet_t {
     bit<16>   etherType;
 }
 
-header myTunnel_t {
-    bit<16> proto_id;
-    bit<16> dst_id;
-}
-
 header ipv6_t {
     bit<4>    version;
-    bit<8>    traffic_class;
-    bit<20>   flow_label;
-    bit<16>   payload_length;
-    bit<8>    next_header;
-    bit<8>    hop_limit;
-    bit<128>  source_address;
-    bit<128>  destination_address;
+    bit<8>    trafClass;
+    bit<20>   flowLabel;
+    bit<16>   payloadLen;
+    bit<8>    nextHeader;
+    bit<8>    hopLimit;
+    bit<128>  srcAddr;
+    bit<128>  dstAddr;
+}
+
+header idp_t{
+    bit<8>    pType;
+    bit<8>    headerLen;
+    bit<4>    dstSeaidType;
+    bit<4>    srcSeaidType;
+    bit<4>    dstSeaidLen;
+    bit<4>    srcSeaidLen;
+    bit<6>    srvType;
+    bit<50>   preference;
+    bit<4>    reserved;
+    bit<4>    flag;
+    bit<160>  dstSeaid;
+    bit<160>  srcSeaid;
+}
+
+header common_t{
+    bit<8> version;
+    bit<8> type;
+}
+
+header seadp_data_t{
+    bit<8>    flags;
+    bit<8>    preference;
+    bit<128>  rs_ip;
+    bit<16>   mylength;
+    bit<16>   checksum;
+    bit<32>   packet_number;
+    bit<32>   offset;
+    bit<32>   len;
 }
 
 struct metadata {
@@ -41,8 +70,10 @@ struct metadata {
 
 struct headers {
     ethernet_t   ethernet;
-    myTunnel_t   myTunnel;
     ipv6_t       ipv6;
+    idp_t        idp;
+    common_t     common;
+    seadp_data_t seadp;
 }
 
 /*************************************************************************
@@ -61,15 +92,6 @@ parser MyParser(packet_in packet,
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            TYPE_MYTUNNEL: parse_myTunnel;
-            TYPE_IPV6: parse_ipv6;
-            default: accept;
-        }
-    }
-
-    state parse_myTunnel {
-        packet.extract(hdr.myTunnel);
-        transition select(hdr.myTunnel.proto_id) {
             TYPE_IPV6: parse_ipv6;
             default: accept;
         }
@@ -77,6 +99,30 @@ parser MyParser(packet_in packet,
 
     state parse_ipv6 {
         packet.extract(hdr.ipv6);
+        transition select(hdr.ipv6.next_header) {
+            TYPE_IDP: parse_idp;
+            default: accept;
+        }
+    }
+
+    state parse_idp{
+        packet.extract(hdr.idp);
+        transition select(hdr.idp.ptype){
+            TYPE_SEADP: parse_common;
+            default: accept;
+        }
+    }
+
+    state parse_common{
+        packet.extract(hdr.common);
+        transition select(hdr.common.type){
+            TYPE_SEADP_DATA: parse_seadp_data;
+            default: accept;
+        }
+    }
+
+    state parse_seadp_data{
+        packet.extract(hdr.seadp);
         transition accept;
     }
 
@@ -102,19 +148,20 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action ipv6_forward(macAddr_t dstAddr, egressSpec_t port) {
-        standard_metadata.egress_spec = port;
+    action idp_forward(macAddr_t dstAddr, ip6Addr_t ip, egressSpec_t port) {
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
+        standard_metadata.egress_spec = port;
+        hdr.ipv6.destination_address = ip;
         hdr.ipv6.hop_limit = hdr.ipv6.hop_limit - 1;
     }
 
-    table ipv6_exact {
+    table idp_exact {
         key = {
-            hdr.ipv6.destination_address: exact;
+            hdr.idp.dst_seaid: exact;
         }
         actions = {
-            ipv6_forward;
+            idp_forward;
             drop;
             NoAction;
         }
@@ -122,31 +169,9 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    action myTunnel_forward(egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-    }
-
-    table myTunnel_exact {
-        key = {
-            hdr.myTunnel.dst_id: exact;
-        }
-        actions = {
-            myTunnel_forward;
-            drop;
-        }
-        size = 1024;
-        default_action = drop();
-    }
-
     apply {
-        if (hdr.ipv6.isValid() && !hdr.myTunnel.isValid()) {
-            // Process only non-tunneled IPv6 packets
-            ipv6_exact.apply();
-        }
-
-        if (hdr.myTunnel.isValid()) {
-            // process tunneled packets
-            myTunnel_exact.apply();
+        if (hdr.idp.isValid()) {
+            idp_exact.apply();
         }
     }
 }
@@ -176,8 +201,10 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
-        packet.emit(hdr.myTunnel);
         packet.emit(hdr.ipv6);
+        packet.emit(hdr.idp);
+        packet.emit(hdr.common);
+        packet.emit(hdr.seadp);
     }
 }
 
