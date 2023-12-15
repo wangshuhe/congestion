@@ -194,7 +194,7 @@ control MyIngress(inout headers hdr,
             ipv6_exact.apply();
         }
         else{
-            ipv6_idp_exact.apply();
+            idp_exact.apply();
         }
     }
 }
