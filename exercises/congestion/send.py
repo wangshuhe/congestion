@@ -25,7 +25,7 @@ def main():
 
     iface = get_if()
 
-    pkt =  Ether(src=get_if_hwaddr(iface), dst='08:00:00:00:01:00')
+    pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
     pkt = pkt / IPv6(dst='1000:0:0:0:0:0:0:1') / Idp(dstSeaid=0x1) #/ Common / SeadpData / args.message
     
     pkt.show2()
