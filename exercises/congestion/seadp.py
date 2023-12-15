@@ -9,18 +9,18 @@ TYPE_SEADP_DATA = 0x00
 class Idp(Packet):
     name = "Idp"
     fields_desc = [
-        BitField("pType", 0, 8),
-        BitField("headerLen", 0, 8),
-        BitField("dstSeaidType", 0, 4),
-        BitField("srcSeaidType", 0, 4),
-        BitField("dstSeaidLen", 0, 4),
-        BitField("srcSeaidLen", 0, 4),
-        BitField("srvType", 0, 6),
-        BitField("preference", 0, 50),
-        BitField("reserved", 0, 4),
-        BitField("flag", 0, 4),
+        #BitField("pType", 0, 8),
+        #BitField("headerLen", 0, 8),
+        #BitField("dstSeaidType", 0, 4),
+        #BitField("srcSeaidType", 0, 4),
+        #BitField("dstSeaidLen", 0, 4),
+        #BitField("srcSeaidLen", 0, 4),
+        #BitField("srvType", 0, 6),
+        #BitField("preference", 0, 50),
+        #BitField("reserved", 0, 4),
+        #BitField("flag", 0, 4),
         BitField("dstSeaid", 0, 160),
-        BitField("srcSeaid", 0, 160),
+        #BitField("srcSeaid", 0, 160),
     ]
 
     def mysummary(self):
