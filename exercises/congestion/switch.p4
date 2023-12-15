@@ -169,9 +169,32 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
+    action ipv6_forward(macAddr_t dstAddr, egressSpec_t port) {
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        standard_metadata.egress_spec = port;
+        hdr.ipv6.hopLimit = hdr.ipv6.hopLimit - 1;
+    }
+
+    table ipv6_exact {
+        key = {
+            hdr.ipv6.dstAddr: exact;
+        }
+        actions = {
+            ipv6_forward;
+            drop;
+            NoAction;
+        }
+        size = 1024;
+        default_action = drop();
+    }
+
     apply {
-        if (hdr.idp.isValid()) {
-            idp_exact.apply();
+        if (idp_exact.lookup() == 0){
+            ipv6_exact.apply();
+        }
+        else{
+            ipv6_idp_exact.apply();
         }
     }
 }
