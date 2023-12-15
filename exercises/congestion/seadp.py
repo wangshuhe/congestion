@@ -7,7 +7,7 @@ TYPE_SEADP = 0x01
 TYPE_SEADP_DATA = 0x00
 
 class Idp(Packet):
-    name = "IDP"
+    name = "Idp"
     fields_desc = [
         BitField("pType", 0, 8),
         BitField("headerLen", 0, 8),
@@ -67,6 +67,6 @@ class SeadpData(Packet):
             self.checksum, self.packet_number, self.offset, self.len
         )
 
-bind_layers(IPv6, IDP, nextHeader=TYPE_IDP)
-bind_layers(IDP, Common, pType=TYPE_SEADP)
+bind_layers(IPv6, IdP, nextHeader=TYPE_IDP)
+bind_layers(IdP, Common, pType=TYPE_SEADP)
 bind_layers(Common, SeadpData, type=TYPE_SEADP_DATA)
