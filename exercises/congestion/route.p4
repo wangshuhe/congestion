@@ -140,9 +140,6 @@ control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
         packet.emit(hdr.ipv6);
-        packet.emit(hdr.idp);
-        packet.emit(hdr.common);
-        packet.emit(hdr.seadp);
     }
 }
 
