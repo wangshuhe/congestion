@@ -166,7 +166,7 @@ control MyIngress(inout headers hdr,
             NoAction;
         }
         size = 1024;
-        default_action = drop();
+        default_action = NoAction();
     }
 
     action ipv6_forward(macAddr_t dstAddr, egressSpec_t port) {
@@ -186,16 +186,13 @@ control MyIngress(inout headers hdr,
             NoAction;
         }
         size = 1024;
-        default_action = drop();
+        default_action = NoAction();
     }
 
     apply {
-        if (!idp_exact.hit){
-            ipv6_exact.apply();
-        }
-        else{
-            idp_exact.apply();
-        }
+        idp_exact.apply();
+        ipv6_exact.apply();
+
     }
 }
 
