@@ -67,6 +67,6 @@ class SeadpData(Packet):
             self.checksum, self.packet_number, self.offset, self.len
         )
 
-bind_layers(IPv6, IdP, nextHeader=TYPE_IDP)
-bind_layers(IdP, Common, pType=TYPE_SEADP)
+bind_layers(IPv6, Idp, nextHeader=TYPE_IDP)
+bind_layers(Idp, Common, pType=TYPE_SEADP)
 bind_layers(Common, SeadpData, type=TYPE_SEADP_DATA)
