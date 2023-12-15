@@ -99,7 +99,7 @@ parser MyParser(packet_in packet,
 
     state parse_ipv6 {
         packet.extract(hdr.ipv6);
-        transition select(hdr.ipv6.next_header) {
+        transition select(hdr.ipv6.nextHeader) {
             TYPE_IDP: parse_idp;
             default: accept;
         }
@@ -107,7 +107,7 @@ parser MyParser(packet_in packet,
 
     state parse_idp{
         packet.extract(hdr.idp);
-        transition select(hdr.idp.ptype){
+        transition select(hdr.idp.pType){
             TYPE_SEADP: parse_common;
             default: accept;
         }
@@ -152,13 +152,13 @@ control MyIngress(inout headers hdr,
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
         standard_metadata.egress_spec = port;
-        hdr.ipv6.destination_address = ip;
-        hdr.ipv6.hop_limit = hdr.ipv6.hop_limit - 1;
+        hdr.ipv6.dstAddr = ip;
+        hdr.ipv6.hopLimit = hdr.ipv6.hopLimit - 1;
     }
 
     table idp_exact {
         key = {
-            hdr.idp.dst_seaid: exact;
+            hdr.idp.dstSeaid: exact;
         }
         actions = {
             idp_forward;

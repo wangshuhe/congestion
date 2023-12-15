@@ -6,7 +6,7 @@
     {
       "table": "MyIngress.idp_exact",
       "match": {
-        "hdr.idp.dst_seaid": ["0000000000000000000000000000000000000001"]
+        "hdr.idp.dstSeaid": ["0000000000000000000000000000000000000001"]
       },
       "action_name": "MyIngress.idp_forward",
       "action_params": {

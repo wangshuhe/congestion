@@ -91,7 +91,7 @@ control MyIngress(inout headers hdr,
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
         standard_metadata.egress_spec = port;
-        hdr.ipv6.hop_limit = hdr.ipv6.hop_limit - 1;
+        hdr.ipv6.hopLimit = hdr.ipv6.hopLimit - 1;
     }
 
     table ipv6_exact {
